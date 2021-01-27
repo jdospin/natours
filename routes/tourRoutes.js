@@ -4,14 +4,17 @@ const {
   updateTour,
   deleteTour,
   getAllTours,
-  getTour
+  getTour,
+  checkID,
+  checkBody,
 } = require('../controllers/tourController');
 const tourRouter = express.Router(); // Creation of a new route. It's like having an app inside another app...
+tourRouter.param('id', checkID);
 
 tourRouter
   .route('/')
   .get(getAllTours)
-  .post(createTour);
+  .post(checkBody, createTour);
 tourRouter
   .route('/:id')
   .get(getTour)
