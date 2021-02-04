@@ -147,7 +147,7 @@ exports.getTourStats = async (req, res) => {
             $toUpper: '$difficulty', // to group by difficulty, and show difficulty results in uppercase
           },
           numTours: {
-            $sum: 1,
+            $sum: 1, // Equivalent to COUNT() in SQL
           },
           numRatings: {
             $sum: '$ratingsQuantity',
@@ -184,6 +184,67 @@ exports.getTourStats = async (req, res) => {
       status: 'success',
       data: {
         stats,
+      },
+    });
+  } catch (err) {
+    res.status(404).json({
+      status: 'fail',
+      message: err,
+    });
+  }
+};
+
+exports.getMonthlyPlan = async (req, res) => {
+  try {
+    const year = parseInt(req.params.year, 10);
+    const plan = await Tour.aggregate([{
+        $unwind: '$startDates', // we use this to "unwind", a document into several documents based on the specified array field here
+      },
+      {
+        $match: {
+          startDates: {
+            $gte: new Date(`${year}-01-01`), // We match all the tours that have start dates between janary 1st and december 31st of the provided year
+            $lte: new Date(`${year}-12-31`),
+          },
+        },
+      },
+      {
+        $group: {
+          _id: {
+            $month: '$startDates', // We're grouping here the results by each month of the existing dates
+          },
+          numTourStarts: {
+            $sum: 1, // How many tours start in the current month? Equivalent to COUNT() in SQL
+          },
+          tours: {
+            $push: '$name', // Pushing to an array the name of each tour that responds to the filter criteria
+          },
+        },
+      },
+      {
+        $addFields: {
+          month: '$_id', // Add a new field to the results with the name "month"
+        },
+      },
+      {
+        $project: {
+          _id: 0, // we are excluding this field from the results
+        },
+      },
+      {
+        $sort: {
+          numTourStarts: -1, // we are sorting in descending order based on the number of tours starting on each month
+        },
+      },
+      {
+        $limit: 12, // to limit the number of results returned
+      },
+    ]);
+
+    res.status(200).json({
+      status: 'success',
+      data: {
+        plan,
       },
     });
   } catch (err) {

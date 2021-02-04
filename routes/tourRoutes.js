@@ -7,6 +7,7 @@ const {
   getTour,
   aliasTopTours,
   getTourStats,
+  getMonthlyPlan,
 } = require('../controllers/tourController');
 
 const tourRouter = express.Router(); // Creation of a new route. It's like having an app inside another app...
@@ -14,6 +15,7 @@ const tourRouter = express.Router(); // Creation of a new route. It's like havin
 
 tourRouter.route('/top-5-cheap').get(aliasTopTours, getAllTours); // calling the getAllTours after calling a new middleware to add the required params to the query string to get only the top 5 cheapest tours
 tourRouter.route('/tour-stats').get(getTourStats);
+tourRouter.route('/monthly-plan/:year').get(getMonthlyPlan);
 tourRouter.route('/').get(getAllTours).post(createTour);
 tourRouter.route('/:id').get(getTour).patch(updateTour).delete(deleteTour);
 
