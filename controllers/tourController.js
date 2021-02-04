@@ -128,3 +128,68 @@ exports.deleteTour = async (req, res) => {
     });
   }
 };
+
+exports.getTourStats = async (req, res) => {
+  try {
+    const stats = await Tour.aggregate([{
+        $match: {
+          ratingsAverage: {
+            $gte: 4.5,
+          },
+        },
+      },
+      {
+        $group: {
+          // _id: '$difficulty', // to group by difficulty
+          // _id: null, // if we don't want to group by anything
+          // _id: '$ratingsAverage', // to group by ratings averages
+          _id: {
+            $toUpper: '$difficulty', // to group by difficulty, and show difficulty results in uppercase
+          },
+          numTours: {
+            $sum: 1,
+          },
+          numRatings: {
+            $sum: '$ratingsQuantity',
+          },
+          avgRating: {
+            $avg: '$ratingsAverage',
+          },
+          avgPrice: {
+            $avg: '$price',
+          },
+          minPrice: {
+            $min: '$price',
+          },
+          maxPrice: {
+            $max: '$price',
+          },
+        },
+      },
+      {
+        $sort: {
+          avgPrice: 1, // 1 is for ascending, -1 for descending
+        },
+      },
+      // {
+      //   $match: {
+      //     _id: {
+      //       $ne: 'EASY', // this is to filter out the tours that are easy. This takes the result from the previous match and group
+      //     },
+      //   },
+      // },
+    ]);
+
+    res.status(200).json({
+      status: 'success',
+      data: {
+        stats,
+      },
+    });
+  } catch (err) {
+    res.status(404).json({
+      status: 'fail',
+      message: err,
+    });
+  }
+};
