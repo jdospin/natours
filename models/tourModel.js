@@ -1,70 +1,71 @@
 const mongoose = require('mongoose');
 const slugify = require('slugify');
 
-const tourSchema = new mongoose.Schema(
-  {
-    name: {
-      type: String,
-      required: [true, 'A tour must have a name'],
-      unique: true,
-      trim: true,
-    },
-    slug: String,
-    duration: {
-      type: Number,
-      required: [true, ' A tour must have a duration'],
-    },
-    ratingsAverage: {
-      type: Number,
-      default: 4.5,
-    },
-    ratingsQuantity: {
-      type: Number,
-      default: 0,
-    },
-    price: {
-      type: Number,
-      required: [true, ' A tour must have a price'],
-    },
-    priceDiscount: Number,
-    maxGroupSize: {
-      type: Number,
-      required: [true, 'A tour must have a group size'],
-    },
-    difficulty: {
-      type: String,
-      required: [true, 'A tour must have a difficulty'],
-    },
-    summary: {
-      type: String,
-      trim: true,
-      required: [true, 'A tour must have a summary'],
-    },
-    description: {
-      type: String,
-      trim: true,
-    },
-    imageCover: {
-      type: String,
-      required: [true, 'A tour must have a cover image'],
-    },
-    images: [String],
-    createdAt: {
-      type: Date,
-      default: Date.now(),
-      select: false,
-    },
-    startDates: [Date],
+const tourSchema = new mongoose.Schema({
+  name: {
+    type: String,
+    required: [true, 'A tour must have a name'],
+    unique: true,
+    trim: true,
   },
-  {
-    toJSON: {
-      virtuals: true,
-    },
-    toObject: {
-      virtuals: true,
-    },
-  }
-);
+  slug: String,
+  duration: {
+    type: Number,
+    required: [true, ' A tour must have a duration'],
+  },
+  ratingsAverage: {
+    type: Number,
+    default: 4.5,
+  },
+  ratingsQuantity: {
+    type: Number,
+    default: 0,
+  },
+  price: {
+    type: Number,
+    required: [true, ' A tour must have a price'],
+  },
+  priceDiscount: Number,
+  maxGroupSize: {
+    type: Number,
+    required: [true, 'A tour must have a group size'],
+  },
+  difficulty: {
+    type: String,
+    required: [true, 'A tour must have a difficulty'],
+  },
+  summary: {
+    type: String,
+    trim: true,
+    required: [true, 'A tour must have a summary'],
+  },
+  description: {
+    type: String,
+    trim: true,
+  },
+  imageCover: {
+    type: String,
+    required: [true, 'A tour must have a cover image'],
+  },
+  images: [String],
+  createdAt: {
+    type: Date,
+    default: Date.now(),
+    select: false,
+  },
+  startDates: [Date],
+  secretTour: {
+    type: Boolean,
+    default: false,
+  },
+}, {
+  toJSON: {
+    virtuals: true,
+  },
+  toObject: {
+    virtuals: true,
+  },
+});
 
 tourSchema.virtual('durationWeeks').get(function () {
   return this.duration / 7;
@@ -80,6 +81,24 @@ tourSchema.pre('save', function (next) {
 });
 
 // tourSchema.post('save', function (doc, next) {  // This is a middleware that gets executed after the 'save' method and has access to the saved document
+//   next();
+// });
+
+// QUERY MIDDLEWARE
+// We want to apply this middleware to all methods that start with 'find', such as find(), findOne(), findOneAndUpdate(), etc
+tourSchema.pre(/^find/, function (next) {
+  this.find({
+    secretTour: {
+      $ne: true,
+    },
+  });
+  // this.start = Date.now(); we can add fields to the query object to access them in the post method
+  next();
+});
+
+// This method has access to all the documents that have been modified
+// tourSchema.post(/^find/, function (docs, next) {
+//   console.log(`This query took ${Date.now() - this.start} milliseconds`);
 //   next();
 // });
 
