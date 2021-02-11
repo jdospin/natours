@@ -1,6 +1,6 @@
 const mongoose = require('mongoose');
 const slugify = require('slugify').default;
-// const validator = require('validator').default;
+// const validator = require('validator').default; // external validation library
 
 const tourSchema = new mongoose.Schema(
   {
@@ -40,6 +40,9 @@ const tourSchema = new mongoose.Schema(
     },
     priceDiscount: {
       type: Number,
+      /* This is a custom validator which allows to do
+        specific validations which are not doable with built-in validators
+      */
       validate: {
         validator: function (value) {
           // this only points to current doc on NEW document creation
