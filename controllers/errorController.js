@@ -5,6 +5,16 @@ const handleCastErrorDB = (err) => {
   return new AppError(message, 400);
 };
 
+const handleDuplicateFieldsDB = (err) => {
+  /* we take for granted that the duplicate key is the name because 
+    it's the only field marked with the "unique" keyword in the tours model
+  */
+  const value = err.keyValue.name;
+  const message = `Duplicate field value: "${value}". Please use another value`;
+
+  return new AppError(message, 409); // 409 is for conflict
+};
+
 const sendErrorDev = (err, res) => {
   res.status(err.statusCode).json({
     status: err.status,
@@ -41,9 +51,8 @@ module.exports = (err, req, res, next) => {
     sendErrorDev(err, res);
   } else if (process.env.NODE_ENV === 'production') {
     let error = Object.assign(err);
-    if (error.name === 'CastError') {
-      error = handleCastErrorDB(error);
-    }
+    if (error.name === 'CastError') error = handleCastErrorDB(error);
+    if (error.code === 11000) error = handleDuplicateFieldsDB(error);
 
     sendErrorProd(error, res);
   }
