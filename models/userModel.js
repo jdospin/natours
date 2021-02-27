@@ -32,6 +32,7 @@ const userSchema = new mongoose.Schema({
       message: `Passwords don't match`,
     },
   },
+  passwordChangedAt: Date,
 });
 
 // Use a document middleware in order to encrypt the password
@@ -52,6 +53,19 @@ userSchema.methods.isPasswordCorrect = async function (
   userPassword
 ) {
   return await bcrypt.compare(candidatePassword, userPassword);
+};
+
+userSchema.methods.changedPasswordAfter = function (JWTTimestamp) {
+  if (this.passwordChangedAt) {
+    const changedTimestamp =
+      parseInt(this.passwordChangedAt.getTime(), 10) / 1000;
+
+    // if the JWTTimestamp is smaller than changedTimestamp,
+    // this means that the pwd has been changed after the token was issued
+    return JWTTimestamp < changedTimestamp;
+  }
+
+  return false;
 };
 
 const User = mongoose.model('User', userSchema);
