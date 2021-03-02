@@ -6,7 +6,7 @@ const userRouter = express.Router(); // Creation of a new router. It's like havi
 userRouter.post('/signup', authController.signup);
 userRouter.post('/login', authController.login);
 userRouter.post('/forgotPassword', authController.forgotPassword);
-userRouter.post('/resetPassword', authController.resetPassword);
+userRouter.patch('/resetPassword/:token', authController.resetPassword);
 
 userRouter
   .route('/')
