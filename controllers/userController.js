@@ -51,6 +51,15 @@ exports.updateMe = catchAsync(async (req, res, next) => {
   });
 });
 
+exports.deleteMe = catchAsync(async (req, res, next) => {
+  await User.findByIdAndUpdate(req.user.id, { active: false });
+
+  res.status(200).json({
+    status: 'success',
+    data: null,
+  });
+});
+
 exports.createUser = (req, res) => {
   // const newId = users[users.length - 1].id + 1;
   // const newUser = { id: newId, ...req.body };
