@@ -128,6 +128,13 @@ tourSchema.virtual('durationWeeks').get(function () {
   return this.duration / 7;
 });
 
+// virtual populate in order to be able to access the reviews linked to the tour
+tourSchema.virtual('reviews', {
+  ref: 'Review',
+  foreignField: 'tour', // this is the name of the field that references the tour model (this one) in the reviews model
+  localField: '_id', // this is the name of the field in this model (tourModel) that is being referenced from the reviewsModel
+});
+
 // DOCUMENT MIDDLEWARE: runs before .save() and .create()
 tourSchema.pre('save', function (next) {
   // the 'this' object is the document that will be saved
