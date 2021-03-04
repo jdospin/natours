@@ -15,10 +15,7 @@ userRouter.patch(
 userRouter.patch('/updateMe', authController.protect, userController.updateMe);
 userRouter.delete('/deleteMe', authController.protect, userController.deleteMe);
 
-userRouter
-  .route('/')
-  .get(userController.getAllUsers)
-  .post(userController.createUser);
+userRouter.route('/').get(userController.getAllUsers);
 userRouter
   .route('/:id')
   .get(userController.getUser)

@@ -65,20 +65,7 @@ exports.getTour = catchAsync(async (req, res, next) => {
   });
 });
 
-exports.createTour = catchAsync(async (req, res, next) => {
-  // can create a new document like this
-  // const newTour = new Tour({}); // have to provide an object with the model's attributes to create the document
-  // newTour.save();
-  const newTour = await Tour.create(req.body); // the attributes to create a new tour are found in the request body
-  res.status(201).json({
-    // created
-    status: 'success',
-    data: {
-      tour: newTour,
-    },
-  });
-});
-
+exports.createTour = factory.createOne(Tour);
 exports.updateTour = factory.updateOne(Tour);
 exports.deleteTour = factory.deleteOne(Tour);
 
