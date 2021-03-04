@@ -34,5 +34,20 @@ const reviewSchema = new mongoose.Schema(
   }
 );
 
+reviewSchema.pre(/^find/, function (next) {
+  this.populate({
+    // we can specify the document we want to populate from
+    // We can also specify which fields we want and don't want
+    // in this case, we don't want "__v" or "passwordChangedAt"
+    path: 'tour',
+    select: 'name',
+  }).populate({
+    path: 'user',
+    select: 'name photo',
+  });
+
+  next();
+});
+
 const Review = mongoose.model('Review', reviewSchema);
 module.exports = Review;
