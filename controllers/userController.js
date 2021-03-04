@@ -1,6 +1,7 @@
 const User = require('../models/userModel');
 const catchAsync = require('../utils/catchAsync');
 const AppError = require('../utils/appError');
+const factory = require('./handlerFactory');
 
 const filterObj = (obj, ...allowedFields) => {
   const newObj = {};
@@ -24,6 +25,7 @@ exports.getAllUsers = catchAsync(async (req, res, next) => {
   });
 });
 
+// allows a signed-in user to update his own user info in the system
 exports.updateMe = catchAsync(async (req, res, next) => {
   if (req.body.password || req.body.passwordConfirm) {
     return next(
@@ -51,6 +53,7 @@ exports.updateMe = catchAsync(async (req, res, next) => {
   });
 });
 
+// allows a signed-in user to delete his own user profile in the system
 exports.deleteMe = catchAsync(async (req, res, next) => {
   await User.findByIdAndUpdate(req.user.id, { active: false });
 
@@ -61,71 +64,24 @@ exports.deleteMe = catchAsync(async (req, res, next) => {
 });
 
 exports.createUser = (req, res) => {
-  // const newId = users[users.length - 1].id + 1;
-  // const newUser = { id: newId, ...req.body };
-  // users.push(newUser);
-  // fs.writeFile(
-  //   `${__dirname}/dev-data/data/users.json`,
-  //   JSON.stringify(users),
-  //   (err) => {
-  //     res.status(201).json({
-  //       // created
-  //       status: 'success',
-  //       data: {
-  //         user: newUser,
-  //       },
-  //     });
-  //   }
-  // );
+  res.status(500).json({
+    status: 'error',
+    message: 'This route is not yet defined',
+  });
 };
 
 exports.getUser = (req, res) => {
-  // const id = parseInt(req.params.id, 10);
-  // if (id > users.length) {
-  //   return res.status(404).json({
-  //     // Not found
-  //     status: 'fail',
-  //     message: 'Invalid user ID',
-  //   });
-  // }
-  // const user = users.find((el) => el.id === id);
-  // res.status(200).json({
-  //   // OK
-  //   status: 'success',
-  //   data: {
-  //     user,
-  //   },
-  // });
+  res.status(500).json({
+    status: 'error',
+    message: 'This route is not yet defined',
+  });
 };
 
 exports.updateUser = (req, res) => {
-  // const id = parseInt(req.params.id, 10);
-  // if (id > users.length) {
-  //   return res.status(404).json({
-  //     // Not found
-  //     status: 'fail',
-  //     message: 'Invalid user ID',
-  //   });
-  // }
-  // res.status(200).json({
-  //   status: 'success',
-  //   data: {
-  //     user: '<Updated user here...>',
-  //   },
-  // });
+  res.status(500).json({
+    status: 'error',
+    message: 'This route is not yet defined',
+  });
 };
 
-exports.deleteUser = (req, res) => {
-  // const id = parseInt(req.params.id, 10);
-  // if (id > users.length) {
-  //   return res.status(404).json({
-  //     status: 'fail',
-  //     message: 'Invalid user ID',
-  //   });
-  // }
-  // res.status(204).json({
-  //   // no content
-  //   status: 'success',
-  //   data: null,
-  // });
-};
+exports.deleteUser = factory.deleteOne(User);
