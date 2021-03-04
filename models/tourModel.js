@@ -1,5 +1,6 @@
 const mongoose = require('mongoose');
 const slugify = require('slugify').default;
+// const User = require('./userModel');
 // const validator = require('validator').default; // external validation library
 
 const tourSchema = new mongoose.Schema(
@@ -106,6 +107,12 @@ const tourSchema = new mongoose.Schema(
         day: Number,
       },
     ],
+    guides: [
+      {
+        type: mongoose.Schema.ObjectId,
+        ref: 'User',
+      },
+    ],
   },
   {
     toJSON: {
@@ -130,6 +137,16 @@ tourSchema.pre('save', function (next) {
   next();
 });
 
+// This middleware is used for embedding guides (users) in tours documents
+// tourSchema.pre('save', async function (next) {
+//   // when saving a new tour that has guides, only the userID of each guide is provided.
+//   // We have to get each user's document and save it back in the guides field
+//   // of the current tour being saved
+//   const guidesPromises = this.guides.map(async (id) => await User.findById(id));
+//   this.guides = await Promise.all(guidesPromises);
+//   next();
+// });
+
 // tourSchema.post('save', function (doc, next) {  // This is a middleware that gets executed after the 'save' method and has access to the saved document
 //   next();
 // });
@@ -143,6 +160,18 @@ tourSchema.pre(/^find/, function (next) {
     },
   });
   // this.start = Date.now(); we can add fields to the query object to access them in the post method
+  next();
+});
+
+tourSchema.pre(/^find/, function (next) {
+  this.populate({
+    // we can specify the document we want to populate from
+    // We can also specify which fields we want and don't want
+    // in this case, we don't want "__v" or "passwordChangedAt"
+    path: 'guides',
+    select: '-__v -passwordChangedAt',
+  });
+
   next();
 });
 
