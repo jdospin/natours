@@ -1,7 +1,7 @@
-const { request } = require('express');
 const Review = require('../models/reviewModel');
 const AppError = require('../utils/appError');
 const catchAsync = require('../utils/catchAsync');
+const factory = require('./handlerFactory');
 
 // 1 get a review
 exports.getReview = catchAsync(async (req, res, next) => {
@@ -48,3 +48,5 @@ exports.createReview = catchAsync(async (req, res, next) => {
     },
   });
 });
+
+exports.deleteReview = factory.deleteOne(Review);
