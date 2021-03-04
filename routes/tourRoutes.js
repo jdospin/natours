@@ -1,10 +1,12 @@
 const express = require('express');
 const tourController = require('../controllers/tourController');
 const authController = require('../controllers/authController');
-const reviewController = require('../controllers/reviewController');
+const reviewRouter = require('./reviewRoutes');
 
 const tourRouter = express.Router(); // Creation of a new route. It's like having an app inside another app...
 // tourRouter.param('id', checkID); // this middleware was used to check the id param before calling the corresponding function in the controller
+
+tourRouter.use('/:tourId/reviews', reviewRouter);
 
 tourRouter
   .route('/top-5-cheap')
@@ -24,11 +26,5 @@ tourRouter
     authController.restrictTo('admin', 'lead-guide'),
     tourController.deleteTour
   );
-tourRouter
-  .route('/:tourId/reviews')
-  .post(
-    authController.protect,
-    authController.restrictTo('user'),
-    reviewController.createReview
-  );
+
 module.exports = tourRouter;
