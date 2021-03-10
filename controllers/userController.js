@@ -13,18 +13,6 @@ const filterObj = (obj, ...allowedFields) => {
   return newObj;
 };
 
-exports.getAllUsers = catchAsync(async (req, res, next) => {
-  const users = await User.find();
-  res.status(200).json({
-    // OK
-    status: 'success',
-    results: users.length,
-    data: {
-      users,
-    },
-  });
-});
-
 // allows a signed-in user to update his own user info in the system
 exports.updateMe = catchAsync(async (req, res, next) => {
   if (req.body.password || req.body.passwordConfirm) {
@@ -63,8 +51,6 @@ exports.deleteMe = catchAsync(async (req, res, next) => {
   });
 });
 
-exports.getUser = factory.getOne('User');
-
 exports.createUser = (req, res) => {
   res.status(500).json({
     status: 'error',
@@ -72,5 +58,7 @@ exports.createUser = (req, res) => {
   });
 };
 
+exports.getUser = factory.getOne('User');
+exports.getAllUsers = factory.getAll(User);
 exports.updateUser = factory.updateOne(User); // don't update passwords with this endpoint
 exports.deleteUser = factory.deleteOne(User);
