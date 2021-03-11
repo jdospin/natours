@@ -14,6 +14,9 @@ tourRouter
 tourRouter.route('/tour-stats').get(tourController.getTourStats);
 tourRouter.route('/monthly-plan/:year').get(tourController.getMonthlyPlan);
 tourRouter
+  .route('/tours-within/:distance/center/:latlng/unit/:unit')
+  .get(tourController.getToursWithin);
+tourRouter
   .route('/')
   .get(tourController.getAllTours)
   .post(
