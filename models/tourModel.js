@@ -195,17 +195,17 @@ tourSchema.pre(/^find/, function (next) {
 
 // AGGREGATION MIDDLEWARE
 // Here, we have access to the aggregation object through the 'this' keyword
-tourSchema.pre('aggregate', function (next) {
-  // Here, we add a match statement to the pipeline array in order to exclude the secret tours
-  this.pipeline().unshift({
-    $match: {
-      secretTour: {
-        $ne: true,
-      },
-    },
-  });
-  next();
-});
+// tourSchema.pre('aggregate', function (next) {
+//   // Here, we add a match statement to the pipeline array in order to exclude the secret tours
+//   this.pipeline().unshift({
+//     $match: {
+//       secretTour: {
+//         $ne: true,
+//       },
+//     },
+//   });
+//   next();
+// });
 
 const Tour = mongoose.model('Tour', tourSchema);
 
