@@ -5,6 +5,7 @@ const userController = require('../controllers/userController');
 const userRouter = express.Router(); // Creation of a new router. It's like having a complete new app inside the current app
 userRouter.post('/signup', authController.signup);
 userRouter.post('/login', authController.login);
+userRouter.get('/logout', authController.logout);
 userRouter.post('/forgotPassword', authController.forgotPassword);
 userRouter.patch('/resetPassword/:token', authController.resetPassword);
 
