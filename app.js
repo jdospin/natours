@@ -26,7 +26,13 @@ app.set('views', path.join(__dirname, 'views'));
 app.use(express.static(path.join(__dirname, 'public')));
 
 // Set Security HTTP headers
-app.use(helmet());
+//app.use(helmet());
+
+// app.use(
+//   helmet({
+//     contentSecurityPolicy: false,
+//   })
+// );
 
 // Log all the requests before processing them
 if (process.env.NODE_ENV === 'development') {
@@ -43,7 +49,11 @@ const limiter = rateLimit({
 app.use('/api', limiter);
 
 // Body parser. Read data sent in the request body
-app.use(express.json({ limit: '10kb' }));
+app.use(
+  express.json({
+    limit: '10kb',
+  })
+);
 app.use(cookieParser());
 
 // Data sanitization agains NoSQL query injection

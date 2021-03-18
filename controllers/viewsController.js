@@ -23,7 +23,6 @@ exports.getTour = catchAsync(async (req, res, next) => {
 
   // 2) Build Template
   // 3) Render template using data from 1)
-
   res
     .status(200)
     .set(
@@ -42,7 +41,7 @@ exports.getLoginForm = catchAsync(async (req, res, next) => {
     .status(200)
     .set(
       'Content-Security-Policy',
-      "connect-src 'self' https://cdnjs.cloudflare.com"
+      "connect-src 'self' https://cdnjs.cloudflare.com ws:"
     )
     .render('login', {
       title: 'Log into your account',
