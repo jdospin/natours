@@ -1,19 +1,24 @@
 const multer = require('multer'); // file uploading
+const sharp = require('sharp'); // image processing
 const User = require('../models/userModel');
 const catchAsync = require('../utils/catchAsync');
 const AppError = require('../utils/appError');
 const factory = require('./handlerFactory');
 
-const multerStorage = multer.diskStorage({
-  destination: (req, file, callback) => {
-    callback(null, 'public/img/users');
-  },
-  filename: (req, file, callback) => {
-    const fileExt = file.mimetype.split('/')[1];
-    // user-2342gh343bhh334v3-213123213.jpeg
-    callback(null, `user-${req.user.id}-${Date.now()}.${fileExt}`);
-  },
-});
+// to save the image directly on the disk
+// const multerStorage = multer.diskStorage({
+//   destination: (req, file, callback) => {
+//     callback(null, 'public/img/users');
+//   },
+//   filename: (req, file, callback) => {
+//     const fileExt = file.mimetype.split('/')[1];
+//     // user-2342gh343bhh334v3-213123213.jpeg
+//     callback(null, `user-${req.user.id}-${Date.now()}.${fileExt}`);
+//   },
+// });
+
+// to save a copy of the file in memory as a buffer
+const multerStorage = multer.memoryStorage();
 
 const multerFilter = (req, file, callback) => {
   if (file.mimetype.startsWith('image')) {
@@ -39,6 +44,20 @@ const filterObj = (obj, ...allowedFields) => {
 };
 
 exports.uploadUserPhoto = upload.single('photo');
+
+exports.resizeUserPhoto = (req, res, next) => {
+  if (!req.file) return next();
+
+  req.file.filename = `user-${req.user.id}-${Date.now()}.jpeg`;
+
+  sharp(req.file.buffer)
+    .resize(500, 500)
+    .toFormat('jpeg')
+    .jpeg({ quality: 90 })
+    .toFile(`public/img/users/${req.file.filename}`);
+
+  next();
+};
 
 exports.getMe = (req, res, next) => {
   req.params.id = req.user.id;
