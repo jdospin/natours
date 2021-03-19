@@ -47,8 +47,6 @@ exports.getMe = (req, res, next) => {
 
 // allows a signed-in user to update his own user info in the system
 exports.updateMe = catchAsync(async (req, res, next) => {
-  console.log(req.file);
-  console.log(req.body);
   if (req.body.password || req.body.passwordConfirm) {
     return next(
       new AppError(
