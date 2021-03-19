@@ -1,7 +1,32 @@
+const multer = require('multer'); // file uploading
 const User = require('../models/userModel');
 const catchAsync = require('../utils/catchAsync');
 const AppError = require('../utils/appError');
 const factory = require('./handlerFactory');
+
+const multerStorage = multer.diskStorage({
+  destination: (req, file, callback) => {
+    callback(null, 'public/img/users');
+  },
+  filename: (req, file, callback) => {
+    const fileExt = file.mimetype.split('/')[1];
+    // user-2342gh343bhh334v3-213123213.jpeg
+    callback(null, `user-${req.user.id}-${Date.now()}.${fileExt}`);
+  },
+});
+
+const multerFilter = (req, file, callback) => {
+  if (file.mimetype.startsWith('image')) {
+    callback(null, true);
+  } else {
+    callback(
+      new AppError('Not an image! Please upload images only', 400),
+      false
+    );
+  }
+};
+
+const upload = multer({ storage: multerStorage, fileFilter: multerFilter });
 
 const filterObj = (obj, ...allowedFields) => {
   const newObj = {};
@@ -13,6 +38,8 @@ const filterObj = (obj, ...allowedFields) => {
   return newObj;
 };
 
+exports.uploadUserPhoto = upload.single('photo');
+
 exports.getMe = (req, res, next) => {
   req.params.id = req.user.id;
   next();
@@ -20,6 +47,8 @@ exports.getMe = (req, res, next) => {
 
 // allows a signed-in user to update his own user info in the system
 exports.updateMe = catchAsync(async (req, res, next) => {
+  console.log(req.file);
+  console.log(req.body);
   if (req.body.password || req.body.passwordConfirm) {
     return next(
       new AppError(
