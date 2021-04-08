@@ -3,6 +3,7 @@ import '@babel/polyfill';
 import { login, logout } from './login';
 import { displayMap } from './mapbox';
 import { updateUserData } from './updateSettings';
+import { bookTour } from './stripe';
 
 // DOM elements
 const mapBox = document.getElementById('map');
@@ -10,6 +11,7 @@ const loginForm = document.querySelector('.form--login');
 const logOutBtn = document.querySelector('.nav__el--logout');
 const userDataForm = document.querySelector('.form-user-data');
 const userPasswordForm = document.querySelector('.form-user-password');
+const bookBtn = document.getElementById('book-tour');
 
 // Delegation
 if (mapBox) {
@@ -19,6 +21,7 @@ if (mapBox) {
 
 if (loginForm) {
   loginForm.addEventListener('submit', (e) => {
+    console.log('detected submit form!');
     e.preventDefault();
     const email = document.getElementById('email').value;
     const password = document.getElementById('password').value;
@@ -57,3 +60,10 @@ if (userPasswordForm) {
 
   });
 }
+
+if (bookBtn)
+  bookBtn.addEventListener('click', e => {
+    e.target.textContent = 'Processing...';
+    const { tourId } = e.target.dataset;
+    bookTour(tourId);
+  });
