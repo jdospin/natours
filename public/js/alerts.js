@@ -5,11 +5,11 @@ export function hideAlert() {
 }
 
 // type is 'success' or 'error'
-export function showAlert(type, msg){
+export function showAlert(type, msg, time = 7){
   hideAlert();
   const html = document.createElement('div');
   html.className = `alert alert--${type}`;
   html.innerHTML = msg;
   document.querySelector('body').insertAdjacentElement('afterbegin', html);
-  window.setTimeout(() => hideAlert(), 2000);
+  window.setTimeout(() => hideAlert(), time * 1000);
 }
