@@ -32,7 +32,10 @@ export async function login (email, password) {
         url: '/api/v1/users/logout',  
       });
 
-      if(res.data.status === 'success') location.reload();
+      if(res.data.status === 'success'){
+        location.reload();
+        showAlert('success', 'Logged out sucessfully!');
+      } 
     } catch(err) {
       showAlert('error', 'Error logging out! Try again.');
     }
